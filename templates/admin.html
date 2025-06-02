@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login F1</title>
+  <style>
+    body {
+      background-color: #0c0c0c;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      padding: 20px;
+    }
+
+    .login-container {
+      background-color: #1e1e1e;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: #0c0c0cac;
+    }
+
+    .flashes {
+      color: #ff4d4d;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #e10600;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #f1f1f1;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #0c0c0c;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #e10600;
+      box-shadow: 0 0 5px #e10600;
+    }
+
+    select {
+        width: 105.8%;
+        padding: 10px;
+        margin-bottom: 20px;
+        background-color: #0c0c0c;
+        border: 1px solid #444;
+        color: white;
+        border-radius: 5px;
+        font-size: 16px;
+        appearance: none; /* Oculta el estilo por defecto del navegador */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'10'%20viewBox%3D'0%200%2010%2010'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M0%202l5%205%205-5z'%20fill%3D'%23e10600'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 10px;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #e10600;
+        box-shadow: 0 0 5px #e10600;
+    }
+
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #e10600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff1e1e;
+    }
+
+    .mensaje-error {
+      color: #ff4d4d;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .btn-volver {
+            display: flex;
+            text-align: center;
+            text-decoration: none;
+            color: #e10600;
+            font-size: 18px;
+            font-weight: lighter;
+        }
+  </style>
+</head>
+
+<body>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>
+            {% for message in messages %}
+                alert("{{ message }}");
+            {% endfor %}
+            </script>
+        {% endif %}
+    {% endwith %}
+  <a href="{{ url_for('home') }}" class="btn-volver">Volver</a>
+
+  <div class="login-container">
+    <label style="font-size: 24px; text-align: center; color: #e10600;">COMPROBAR RESULTADOS PARA:</label>
+    <label style="color: #e10600; text-align: center; font-size: 15px;">(Es recomendable comprobarlos después del Martes)</label><br><br>
+    <form action="/comparar_predicciones/312903084756" method="post" onsubmit="return mostrarAlertaComprobar()">
+      <label for="comparar" style="text-align: center; text-transform: uppercase; font-size: 24px;">{{ultimo_gp.EventName}}</label> <br><br>
+      <button type="submit" style="width: 50%; margin-left: 25%;">Comprobar</button>
+    </form>
+  </div>
+  
+  <div class="login-container">
+    <h2>ESTABLECER PUNTAJE:</h2>
+    <form action="/establecer_puntos/2189073129873" method="POST" onsubmit="return mostrarAlertaEstablecer()">
+
+        <label for="usuario">Usuario</label>
+        <select id="username" name="username" required>
+            {% for user in usuarios %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+        <br>
+        
+        <label for="p">Puntos</label>
+        <input type="number" id="pts" name="pts" required>
+
+        <button type="submit" style="width: 50%; margin-left: 25%;">Establecer</button>
+    </form>
+  </div>
+
+  
+</body>
+
+<script>
+    function mostrarAlertaComprobar() {
+      if (confirm("¿Estás seguro de que querés comprobar las predicciones?")){    
+        alert("Se están comprobando las predicciones");
+        return true; // permite que el formulario se envíe
+      }
+      return false;
+    }
+  
+    function mostrarAlertaEstablecer() {
+      alert("Puntos establecidos");
+      return true; // permite que el formulario se envíe
+    }
+</script>
+
+</html>

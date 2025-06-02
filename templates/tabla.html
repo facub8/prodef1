@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+      body {
+        background-color: #0c0c0c;
+        font-family: 'Orbitron', Arial, sans-serif;
+        color: white;
+        padding: 20px;
+      }
+
+      h2 {
+        color: #e10600;
+        font-size: 28px;
+        text-align: center;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+        width: 100%;
+        display: inline-block;
+        padding-bottom: 5px;
+      }
+
+      .tabla-posiciones-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #1a1a1a;
+
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .tabla-posiciones {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .tabla-posiciones thead {
+        background-color: #222;
+      }
+
+      .tabla-posiciones th,
+      .tabla-posiciones td {
+        padding: 12px;
+        border-bottom: 1px solid #444;
+      }
+
+      .tabla-posiciones th {
+        color: #e10600;
+        font-size: 16px;
+        letter-spacing: 1px;
+      }
+
+      .tabla-posiciones tbody tr:nth-child(odd) {
+        background-color: #1e1e1e;
+      }
+
+      .tabla-posiciones tbody tr:nth-child(even) {
+        background-color: #151515;
+      }
+
+      .tabla-posiciones tbody tr:hover {
+        background-color: #2a2a2a;
+        cursor: pointer;
+      }
+
+      .tabla-posiciones td {
+        color: #f1f1f1;
+        font-weight: lighter;
+      }
+
+      .tabla-posiciones td:first-child {
+        color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Tabla de Posiciones</h2>
+    <div class="tabla-posiciones-container">
+      <table class="tabla-posiciones">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>USUARIO</th>
+            <th>PUNTOS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td style="text-transform: uppercase;">{{ user.username }}</td>
+            <td>{{ user.puntaje }} PTS</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

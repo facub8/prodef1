@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login F1</title>
+  <style>
+    body {
+      background-color: #0c0c0c;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      padding: 20px;
+    }
+
+    .login-container {
+      background-color: #1e1e1e;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      border-radius: 10px;
+
+    }
+
+    .flashes {
+      color: #ff4d4d;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #e10600;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #f1f1f1;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #0c0c0c;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #e10600;
+      box-shadow: 0 0 5px #e10600;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #e10600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff1e1e;
+    }
+
+    .mensaje-error {
+      color: #ff4d4d;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+    
+    
+  <div class="login-container">
+    <h2>Iniciar Sesión</h2>
+    <form action="/register" method="post">
+
+      <label for="usuario">Access Key</label>
+      <input type="password" id="access_key" name="access_key" required>
+
+      <label for="usuario">Usuario</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="usuario">Email</label>
+      <input type="text" id="email" name="email">
+
+      <label for="contrasena">Contraseña</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="is_admin">¿Es administrador?</label>
+      <input type="checkbox" id="is_admin" name="is_admin">
+      <br>
+      <br>
+      <button type="submit">Crear</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flashes">
+            {% for message in messages %}
+            <label class="flashes">{{ message }}</label>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    
+    
+
+
+  </div>
+
+</body>
+</html>

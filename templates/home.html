@@ -1,0 +1,184 @@
+<html>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+      body {
+        background-color: #0c0c0c;
+        font-family: 'Orbitron', Arial, sans-serif;
+        color: white;
+        padding: 20px;
+      }
+
+      h2 {
+        color: #e10600;
+        font-size: 50px;
+        text-align: center;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+        width: 100%;
+        display: inline-block;
+        padding-bottom: 5px;
+      }
+
+      .tabla-posiciones-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #1a1a1a;
+
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .tabla-posiciones {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .tabla-posiciones thead {
+        background-color: #222;
+      }
+
+      .tabla-posiciones th,
+      .tabla-posiciones td {
+        padding: 12px;
+        border-bottom: 1px solid #444;
+      }
+
+      .tabla-posiciones th {
+        color: #e10600;
+        font-size: 16px;
+        letter-spacing: 1px;
+      }
+
+      .tabla-posiciones tbody tr:nth-child(odd) {
+        background-color: #1e1e1e;
+      }
+
+      .tabla-posiciones tbody tr:nth-child(even) {
+        background-color: #151515;
+      }
+
+      .tabla-posiciones tbody tr:hover {
+        background-color: #2a2a2a;
+        cursor: pointer;
+      }
+
+      .tabla-posiciones td {
+        color: #f1f1f1;
+        font-weight: lighter;
+      }
+
+      .tabla-posiciones td:first-child {
+        color: #aaa;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: column; /* Esto los apila verticalmente */
+        align-items: center;     /* Centra horizontalmente */
+        gap: 10px;               /* Espacio entre botones */
+        margin-top: 125px;
+      }
+
+      .buttons button {
+        font-family: 'Orbitron', Arial, sans-serif;
+        
+        
+        margin: 0 auto;
+        background-color: #1a1a1a;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        color: white;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding-left: 20px; /* separación opcional del borde izquierdo */
+    }
+
+    .username {
+        font-family: 'Arial', sans-serif;
+        
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .logout-btn {
+        margin-bottom: 2px;
+        border-radius: 25%;
+        background-color: #DC3545;
+        border: none;
+        cursor: pointer;
+        padding: 6px 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+    }
+
+    .logout-btn img {
+        width: 25px;
+        height: 25px;
+        vertical-align: middle;
+        margin-bottom: 2px;
+    }
+
+    
+
+    .a-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding-left: 20px;
+    }
+
+    .a-buttons button {
+        background-color: #ff4747;
+        border-radius: 10px;
+        padding: 0 20px;
+        color: white;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        height: 35px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    
+    </style>
+  </head>
+  <body>
+    <div class="user-info">
+        <span class="username" style="text-transform: uppercase;">{{ username }}</span>
+        <button onclick="location.href='/logout'" class="logout-btn">
+          <img src="static/logout_icon.png" alt="Logout" width="25" height="25">
+        </button>
+    </div>
+    {% if is_admin %}
+    <div class="a-buttons">
+        <button onclick="location.href='/admin'">ADMIN</button>
+    </div>
+    {% endif %}
+    <h2>PRODE 2025</h2>
+    <div class="buttons">
+      <button onclick="location.href='/prode'" style="width: 300px; font-size:20px">Predicción</button>
+      <button onclick="location.href='/tabla'" style="font-size: 12px">Tabla de Posiciones</button>
+    </div>
+  </body>
+</html>

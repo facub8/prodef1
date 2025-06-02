@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prode</title>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <style>
+    body {
+      background-color: #0c0c0c;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #e10600;
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    h3 {
+      color: #e10600;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Estilos para el contador de tiempo */
+    .countdown-container {
+      text-align: center;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      max-width: 400px;
+    }
+
+    .countdown {
+      font-size: 32px;
+      font-weight: bold;
+      color: #e10600;
+    }
+
+    .s:disabled {
+      background-color: #666666;
+      cursor: not-allowed;
+    }
+
+    .evento-info {
+      margin-top: 10px;
+      color: #ffffff;
+    }
+
+    .grid-container {
+      counter-reset: item;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 10%;
+      margin: 0 auto;
+      column-count: 2;
+      column-gap: 20px;
+      width: 500px;
+    }
+
+    li {
+      background-color: #1e1e1e;
+      border-left: 5px solid #e10600;
+      padding: 12px 16px 12px 45px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #f1f1f1;
+      cursor: grab;
+      border-radius: 4px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      position: relative;
+    }
+
+    li::before {
+      content: counter(item);
+      counter-increment: item;
+      position: absolute;
+      left: 10px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .sortable-chosen {
+      background-color: #333;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #e10600;
+    }
+
+    .sortable-ghost {
+      opacity: 0.5;
+    }
+
+    .s {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      background-color: #e10600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .s:hover {
+      background-color: #ff1e1e;
+    }
+
+    /* Colores por escudería */
+    li.redbull   { border-left-color: #1e41ff; }
+    li.mercedes  { border-left-color: #00d2be; }
+    li.ferrari   { border-left-color: #dc0000; }
+    li.mclaren   { border-left-color: #ff8000; }
+    li.aston     { border-left-color: #006f62; }
+    li.alpine    { border-left-color: #0090ff; }
+    li.rb        { border-left-color: #6692ff; }
+    li.williams  { border-left-color: #005aff; }
+    li.haas      { border-left-color: #ffffff; }
+    li.audi      { border-left-color: #00ff00; }
+  </style>
+</head>
+<style>
+  /* Estilo para la segunda lista (inicialmente oculta) */
+  #lista-carrera {
+    display: none;
+  }
+
+  /* Estilo para los pilotos fuera de los puntos (segunda columna) */
+  #lista-carrera li:nth-child(n+11) {
+    color: #888888;
+    opacity: 0.7;
+    background-color: #1a1a1a;
+  }
+
+  /* Estilo para los pilotos fuera de los puntos en el Sprint */
+  #lista-carreras li:nth-child(n+9) {
+    color: #888888;
+    opacity: 0.7;
+    background-color: #1a1a1a;
+  }
+
+  .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding-left: 20px; /* separación opcional del borde izquierdo */
+    }
+
+    .username {
+        font-family: 'Arial', sans-serif;
+        
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .logout-btn {
+        margin-bottom: 2px;
+        border-radius: 25%;
+        background-color: #DC3545;
+        border: none;
+        cursor: pointer;
+        padding: 6px 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+    }
+
+    .logout-btn img {
+        width: 25px;
+        height: 25px;
+        vertical-align: middle;
+        margin-bottom: 2px;
+    }
+      .dnf-container {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 800px;
+  }
+
+  .dnf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .dnf-driver {
+    background-color: #1e1e1e;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    border-left: 5px solid;
+    transition: all 0.3s ease;
+  }
+
+  .dnf-driver.selected {
+    background-color: #e10600;
+    transform: scale(1.05);
+  }
+</style>
+
+<body>
+  <div class="user-info">
+    <span class="username" style="text-transform: uppercase;">{{ username }}</span>
+    <button onclick="location.href='/logout'" class="logout-btn">
+      <img src="static/logout_icon.png" alt="Logout" width="25" height="25">
+    </button>
+  </div>
+  <!-- Contador de tiempo para el próximo evento -->
+  <div class="countdown-container">
+    <div id="proximo-evento" class="evento-info">Próximo evento: Cargando...</div>
+    <div id="countdown" class="countdown">--:--:--:--</div>
+  </div>
+
+  
+
+  <h2 id="titulo-lista">Predicción Clasificación</h2>
+  <h3 id="subtitulo-lista"></h3>
+  <div class="grid-container">
+    {% if gp_info['TipoFinde'] == 'sprint' %}
+    <ul id="lista-qualys">
+      <li data-nombre="VER" class="redbull">VER</li>
+      <li data-nombre="TSU" class="redbull">TSU</li>
+      <li data-nombre="HAM" class="ferrari">HAM</li>
+      <li data-nombre="LEC" class="ferrari">LEC</li>
+      <li data-nombre="RUS" class="mercedes">RUS</li>
+      <li data-nombre="ANT" class="mercedes">ANT</li>
+      <li data-nombre="NOR" class="mclaren">NOR</li>
+      <li data-nombre="PIA" class="mclaren">PIA</li>
+      <li data-nombre="ALO" class="aston">ALO</li>
+      <li data-nombre="STR" class="aston">STR</li>
+      <li data-nombre="GAS" class="alpine">GAS</li>
+      <li data-nombre="COL" class="alpine">COL</li>
+      <li data-nombre="OCO" class="haas">OCO</li>
+      <li data-nombre="BEA" class="haas">BEA</li>
+      <li data-nombre="LAW" class="rb">LAW</li>
+      <li data-nombre="HAD" class="rb">HAD</li>
+      <li data-nombre="SAI" class="williams">SAI</li>
+      <li data-nombre="ALB" class="williams">ALB</li>
+      <li data-nombre="HUL" class="audi">HUL</li>
+      <li data-nombre="BOR" class="audi">BOR</li>
+    </ul>
+
+    <ul id="lista-carreras">
+      <li data-nombre="VER" class="redbull">VER</li>
+      <li data-nombre="TSU" class="redbull">TSU</li>
+      <li data-nombre="HAM" class="ferrari">HAM</li>
+      <li data-nombre="LEC" class="ferrari">LEC</li>
+      <li data-nombre="RUS" class="mercedes">RUS</li>
+      <li data-nombre="ANT" class="mercedes">ANT</li>
+      <li data-nombre="NOR" class="mclaren">NOR</li>
+      <li data-nombre="PIA" class="mclaren">PIA</li>
+      <li data-nombre="ALO" class="aston">ALO</li>
+      <li data-nombre="STR" class="aston">STR</li>
+      <li data-nombre="GAS" class="alpine">GAS</li>
+      <li data-nombre="COL" class="alpine">COL</li>
+      <li data-nombre="OCO" class="haas">OCO</li>
+      <li data-nombre="BEA" class="haas">BEA</li>
+      <li data-nombre="LAW" class="rb">LAW</li>
+      <li data-nombre="HAD" class="rb">HAD</li>
+      <li data-nombre="SAI" class="williams">SAI</li>
+      <li data-nombre="ALB" class="williams">ALB</li>
+      <li data-nombre="HUL" class="audi">HUL</li>
+      <li data-nombre="BOR" class="audi">BOR</li>
+    </ul>
+    {% endif %}
+
+    <ul id="lista-qualy">
+      <li data-nombre="VER" class="redbull">VER</li>
+      <li data-nombre="TSU" class="redbull">TSU</li>
+      <li data-nombre="HAM" class="ferrari">HAM</li>
+      <li data-nombre="LEC" class="ferrari">LEC</li>
+      <li data-nombre="RUS" class="mercedes">RUS</li>
+      <li data-nombre="ANT" class="mercedes">ANT</li>
+      <li data-nombre="NOR" class="mclaren">NOR</li>
+      <li data-nombre="PIA" class="mclaren">PIA</li>
+      <li data-nombre="ALO" class="aston">ALO</li>
+      <li data-nombre="STR" class="aston">STR</li>
+      <li data-nombre="GAS" class="alpine">GAS</li>
+      <li data-nombre="COL" class="alpine">COL</li>
+      <li data-nombre="OCO" class="haas">OCO</li>
+      <li data-nombre="BEA" class="haas">BEA</li>
+      <li data-nombre="LAW" class="rb">LAW</li>
+      <li data-nombre="HAD" class="rb">HAD</li>
+      <li data-nombre="SAI" class="williams">SAI</li>
+      <li data-nombre="ALB" class="williams">ALB</li>
+      <li data-nombre="HUL" class="audi">HUL</li>
+      <li data-nombre="BOR" class="audi">BOR</li>
+    </ul>
+
+    <!-- Nueva lista para la carrera (inicialmente oculta) -->
+    <ul id="lista-carrera">
+      <li data-nombre="VER" class="redbull">VER</li>
+      <li data-nombre="TSU" class="redbull">TSU</li>
+      <li data-nombre="HAM" class="ferrari">HAM</li>
+      <li data-nombre="LEC" class="ferrari">LEC</li>
+      <li data-nombre="RUS" class="mercedes">RUS</li>
+      <li data-nombre="ANT" class="mercedes">ANT</li>
+      <li data-nombre="NOR" class="mclaren">NOR</li>
+      <li data-nombre="PIA" class="mclaren">PIA</li>
+      <li data-nombre="ALO" class="aston">ALO</li>
+      <li data-nombre="STR" class="aston">STR</li>
+      <li data-nombre="GAS" class="alpine">GAS</li>
+      <li data-nombre="COL" class="alpine">COL</li>
+      <li data-nombre="OCO" class="haas">OCO</li>
+      <li data-nombre="BEA" class="haas">BEA</li>
+      <li data-nombre="LAW" class="rb">LAW</li>
+      <li data-nombre="HAD" class="rb">HAD</li>
+      <li data-nombre="SAI" class="williams">SAI</li>
+      <li data-nombre="ALB" class="williams">ALB</li>
+      <li data-nombre="HUL" class="audi">HUL</li>
+      <li data-nombre="BOR" class="audi">BOR</li>
+    </ul>
+  </div>
+
+  <!-- Predicción Vuelta Rápida -->
+  <div id="fastest-lap-container" class="fastest-lap-container" style="display: none;">
+    <h2>Predicción Vuelta Rápida</h2>
+    <select id="fastest-lap-select" class="fastest-lap-select">
+      <option value="" disabled selected>Selecciona un piloto</option>
+      <option value="VER" class="redbull">VER</option>
+      <option value="TSU" class="redbull">TSU</option>
+      <option value="HAM" class="ferrari">HAM</option>
+      <option value="LEC" class="ferrari">LEC</option>
+      <option value="RUS" class="mercedes">RUS</option>
+      <option value="ANT" class="mercedes">ANT</option>
+      <option value="NOR" class="mclaren">NOR</option>
+      <option value="PIA" class="mclaren">PIA</option>
+      <option value="ALO" class="aston">ALO</option>
+      <option value="STR" class="aston">STR</option>
+      <option value="GAS" class="alpine">GAS</option>
+      <option value="COL" class="alpine">COL</option>
+      <option value="OCO" class="haas">OCO</option>
+      <option value="BEA" class="haas">BEA</option>
+      <option value="LAW" class="rb">LAW</option>
+      <option value="HAD" class="rb">HAD</option>
+      <option value="SAI" class="williams">SAI</option>
+      <option value="ALB" class="williams">ALB</option>
+      <option value="HUL" class="audi">HUL</option>
+      <option value="BOR" class="audi">BOR</option>
+    </select>
+  </div>
+
+  <!-- Predicción Pit Stop más Rápido -->
+  <div id="fastest-pit-stop-container" class="fastest-lap-container" style="display: none;">
+    <h2>Predicción Pit Stop más Rápido</h2>
+    <select id="fastest-pit-stop-select" class="fastest-lap-select">
+      <option value="" disabled selected>Selecciona una escudería</option>
+      <option value="Redbull" class="redbull">Red Bull</option>
+      <option value="Mercedes" class="mercedes">Mercedes</option>
+      <option value="Ferrari" class="ferrari">Ferrari</option>
+      <option value="McLaren" class="mclaren">McLaren</option>
+      <option value="Aston Martin" class="aston">Aston Martin</option>
+      <option value="Alpine" class="alpine">Alpine</option>
+      <option value="Racing Bulls" class="rb">Racing Bulls</option>
+      <option value="Williams" class="williams">Williams</option>
+      <option value="Haas" class="haas">Haas</option>
+      <option value="Kick Sauber" class="audi">Kick Sauber</option>
+    </select>
+  </div>
+
+  <!-- Predicción DNF -->
+  <div id="dnf-container" class="dnf-container" style="display: none;">
+    <h2>Predicción DNF</h2>
+    <h3>Selecciona hasta 4 pilotos que no terminarán la carrera</h3>
+    <div class="dnf-grid">
+      <div class="dnf-driver redbull" data-nombre="VER" onclick="toggleDNFSelection(this)">VER</div>
+      <div class="dnf-driver redbull" data-nombre="TSU" onclick="toggleDNFSelection(this)">TSU</div>
+      <div class="dnf-driver ferrari" data-nombre="HAM" onclick="toggleDNFSelection(this)">HAM</div>
+      <div class="dnf-driver ferrari" data-nombre="LEC" onclick="toggleDNFSelection(this)">LEC</div>
+      <div class="dnf-driver mercedes" data-nombre="RUS" onclick="toggleDNFSelection(this)">RUS</div>
+      <div class="dnf-driver mercedes" data-nombre="ANT" onclick="toggleDNFSelection(this)">ANT</div>
+      <div class="dnf-driver mclaren" data-nombre="NOR" onclick="toggleDNFSelection(this)">NOR</div>
+      <div class="dnf-driver mclaren" data-nombre="PIA" onclick="toggleDNFSelection(this)">PIA</div>
+      <div class="dnf-driver aston" data-nombre="ALO" onclick="toggleDNFSelection(this)">ALO</div>
+      <div class="dnf-driver aston" data-nombre="STR" onclick="toggleDNFSelection(this)">STR</div>
+      <div class="dnf-driver alpine" data-nombre="GAS" onclick="toggleDNFSelection(this)">GAS</div>
+      <div class="dnf-driver alpine" data-nombre="COL" onclick="toggleDNFSelection(this)">COL</div>
+      <div class="dnf-driver haas" data-nombre="OCO" onclick="toggleDNFSelection(this)">OCO</div>
+      <div class="dnf-driver haas" data-nombre="BEA" onclick="toggleDNFSelection(this)">BEA</div>
+      <div class="dnf-driver rb" data-nombre="LAW" onclick="toggleDNFSelection(this)">LAW</div>
+      <div class="dnf-driver rb" data-nombre="HAD" onclick="toggleDNFSelection(this)">HAD</div>
+      <div class="dnf-driver williams" data-nombre="SAI" onclick="toggleDNFSelection(this)">SAI</div>
+      <div class="dnf-driver williams" data-nombre="ALB" onclick="toggleDNFSelection(this)">ALB</div>
+      <div class="dnf-driver audi" data-nombre="HUL" onclick="toggleDNFSelection(this)">HUL</div>
+      <div class="dnf-driver audi" data-nombre="BOR" onclick="toggleDNFSelection(this)">BOR</div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Predicción Pit Stop más Rápido -->
+  <div id="fastest-pit-stop-container" class="fastest-lap-container" style="display: none;">
+    <h2>Predicción Pit Stop más Rápido</h2>
+    <select id="fastest-pit-stop-select" class="fastest-lap-select">
+      <option value="" disabled selected>Selecciona una escudería</option>
+      <option value="Redbull" class="redbull">Red Bull</option>
+      <option value="Mercedes" class="mercedes">Mercedes</option>
+      <option value="Ferrari" class="ferrari">Ferrari</option>
+      <option value="McLaren" class="mclaren">McLaren</option>
+      <option value="Aston Martin" class="aston">Aston Martin</option>
+      <option value="Alpine" class="alpine">Alpine</option>
+      <option value="Racing Bulls" class="rb">Racing Bulls</option>
+      <option value="Williams" class="williams">Williams</option>
+      <option value="Haas" class="haas">Haas</option>
+      <option value="Kick Sauber" class="audi">Kick Sauber</option>
+    </select>
+  </div>
+
+  <button class="s" id="btn-siguiente" onclick="siguienteLista()">Siguiente</button>
+
+  <style>
+    .fastest-lap-container {
+      text-align: center;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+  
+    .fastest-lap-select {
+      background-color: #1e1e1e;
+      color: white;
+      padding: 10px;
+      border: 2px solid #e10600;
+      border-radius: 5px;
+      width: 200px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  
+    .fastest-lap-select option {
+      background-color: #1e1e1e;
+      color: white;
+    }
+  </style>
+  <script>
+
+    function enviarOrden() {
+      alert('Por favor, completa ambas predicciones y presiona "Enviar predicción" al final.');
+      
+      // Usar el selector correcto dependiendo de qué lista está visible
+      const listaQualy = document.getElementById('lista-qualy');
+      const selector = listaQualy.style.display !== 'none' ? '#lista-qualy li' : '#lista-carrera li';
+      
+      const elementos = document.querySelectorAll(selector);
+      const orden = [];
+      elementos.forEach((li, i) => {
+        orden.push({ posicion: i + 1, nombre: li.dataset.nombre });
+      });
+    
+      fetch('/guardar_orden', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orden)
+      }).then(response => {
+        if (response.ok) {
+          alert('Orden enviado correctamente');
+        } else {
+          alert('Error al enviar');
+        }
+      });
+    }
+
+    // Función para convertir fechas UTC a hora local
+    function actualizarContador(fechaEvento, nombreEvento) {
+      const ahora = new Date().getTime();
+      const eventoTime = new Date(fechaEvento).getTime();
+      const diferencia = eventoTime - ahora;
+    
+      const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+    
+      const esMartes = new Date().getDay() === 2;
+      const botonSiguiente = document.getElementById('btn-siguiente');
+      
+      if (diferencia < 0) {
+        if (esMartes) {
+          botonSiguiente.disabled = false;
+          document.getElementById('countdown').innerHTML = 'Predicciones habilitadas';
+          document.getElementById('proximo-evento').textContent = 'Es martes, puedes hacer tus predicciones';
+        } else {
+          
+
+          botonSiguiente.disabled = true;
+          document.getElementById('countdown').innerHTML = 'El fin de semana ya ha comenzado!';
+          document.getElementById('proximo-evento').textContent = `El evento ${nombreEvento} ya ha comenzado.`;
+        }
+        return false;
+      }
+      if (nombreEvento === 'Sprint' || nombreEvento === 'Race') {
+        botonSiguiente.disabled = true;
+        document.getElementById('countdown').innerHTML = 'El fin de semana ya ha comenzado!';
+        document.getElementById('proximo-evento').textContent = `El evento ${nombreEvento} ya ha comenzado.`;
+        return false;
+      }
+      
+      
+    
+      botonSiguiente.disabled = false;
+      document.getElementById('countdown').innerHTML = 
+        `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+      document.getElementById('proximo-evento').textContent = `Tiempo restante para ${nombreEvento}:`;
+      return true;
+    }
+
+    // Inicializar el contador cuando se carga la página
+    document.addEventListener('DOMContentLoaded', function() {
+      const gpInfo = {{ gp_info|tojson|safe }};
+      if (gpInfo) {
+        let proximoEvento = null;
+        let nombreProximoEvento = '';
+        const ahora = new Date();
+
+        // Encontrar el próximo evento más cercano
+        gpInfo.Eventos.forEach(evento => {
+          const [nombre, fecha] = Object.entries(evento)[0];
+          const fechaEvento = new Date(fecha);
+          if (fechaEvento > ahora && (!proximoEvento || fechaEvento < new Date(proximoEvento))) {
+            proximoEvento = fecha;
+            nombreProximoEvento = nombre;
+          }
+        });
+
+        if (proximoEvento) {
+          // Actualizar el contador cada segundo
+          actualizarContador(proximoEvento, nombreProximoEvento);
+          setInterval(() => {
+            actualizarContador(proximoEvento, nombreProximoEvento);
+          }, 1000);
+        } else {
+          document.getElementById('countdown').innerHTML = "No hay eventos próximos";
+          document.getElementById('proximo-evento').textContent = "No hay eventos programados";
+        }
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Determinar el tipo de fin de semana basado en gp_info
+      const gpInfo = {{ gp_info|tojson|safe }};
+      const tieneSprint = gpInfo && gpInfo.TipoFinde === 'sprint';
+      
+      // Definir las fases según el tipo de fin de semana
+      const fasesConSprint = ["lista-qualys", "lista-carreras", "lista-qualy", "lista-carrera", "fastest-lap-container", "fastest-pit-stop-container", "dnf-container"];
+      const fasesSinSprint = ["lista-qualy", "lista-carrera", "fastest-lap-container", "fastest-pit-stop-container", "dnf-container"];
+      const fases = tieneSprint ? fasesConSprint : fasesSinSprint;
+      let fase = 0;
+
+      // Inicializar Sortable para todas las listas
+      const listas = ['lista-qualy', 'lista-carrera'];
+      if (tieneSprint) {
+        listas.push('lista-qualys', 'lista-carreras');
+      }
+
+      listas.forEach(id => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+          new Sortable(elemento, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen'
+          });
+        }
+      });
+
+      // Ocultar todas las listas al inicio
+      fases.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
+
+      // Mostrar la primera lista y actualizar la interfaz
+      mostrarFase(fase);
+      actualizarInterfaz(fase);  // Añadir esta línea
+      
+      // Configurar el botón siguiente
+      document.getElementById("btn-siguiente").addEventListener("click", () => {
+        // Ocultar la fase actual
+        ocultarFase(fase);
+        fase++;
+        
+        if (fase >= fases.length) {
+          // Ya pasamos todas las fases => confirmar antes de enviar predicciones
+          if (confirm('¿Estás seguro de que deseas enviar tus predicciones?')) {
+              enviarPredicciones();
+          } else {
+              // Si el usuario cancela, volvemos a la fase anterior
+              fase--;
+              mostrarFase(fase);
+              actualizarInterfaz(fase);
+          }
+        } else {
+          // Mostrar la siguiente lista
+          mostrarFase(fase);
+          actualizarInterfaz(fase);
+        }
+      });
+
+      function mostrarFase(f) {
+        const el = document.getElementById(fases[f]);
+        if (el) el.style.display = "block";
+      }
+
+      function ocultarFase(f) {
+        const el = document.getElementById(fases[f]);
+        if (el) el.style.display = "none";
+      }
+
+      function actualizarInterfaz(f) {
+        const titulo = document.getElementById('titulo-lista');
+        const subtitulo = document.getElementById('subtitulo-lista');
+        const boton = document.getElementById('btn-siguiente');
+        const fastestLapContainer = document.getElementById('fastest-lap-container');
+        const fastestPitStopContainer = document.getElementById('fastest-pit-stop-container');
+      
+        // Ocultar el título general en las fases especiales
+        if (f === fases.length - 1 || f === fases.length - 2) {
+            titulo.style.display = 'none';
+            subtitulo.style.display = 'none';
+        } else {
+            titulo.style.display = 'block';
+            subtitulo.style.display = 'block';
+        }
+      
+        if (tieneSprint) {
+          switch(f) {
+            case 0:
+              titulo.textContent = 'Predicción Clasificación (Sprint)';
+              subtitulo.textContent = '';
+              boton.textContent = 'Siguiente';
+              break;
+            case 2:
+              titulo.textContent = 'Predicción Clasificación';
+              subtitulo.textContent = '';
+              boton.textContent = 'Siguiente';
+              break;
+            case 1:
+              titulo.textContent = 'Predicción Sprint';
+              subtitulo.textContent = '(Se tomarán solo los primeros 8 pilotos)';
+              boton.textContent = 'Siguiente';
+              break;
+            case 3:
+              titulo.textContent = 'Predicción Carrera';
+              subtitulo.textContent = '(Se tomarán solo los primeros 10 pilotos)';
+              boton.textContent = 'Enviar predicción';
+              break;
+            case 4:
+              titulo.textContent = 'Predicción Vuelta Rápida';
+              subtitulo.textContent = '';
+              boton.textContent = 'Enviar predicción';
+              break;
+            case 5:
+              titulo.textContent = 'Predicción Pit Stop más Rápido';
+              subtitulo.textContent = '';
+              boton.textContent = 'Enviar predicción';
+              break;
+          }
+        } else {
+          if (f === fases.length - 1) {
+            titulo.textContent = 'Predicción Pit Stop más Rápido';
+            subtitulo.textContent = '';
+            boton.textContent = 'Enviar predicción';
+          } else if (f === fases.length - 2) {
+            titulo.textContent = 'Predicción Vuelta Rápida';
+            subtitulo.textContent = '';
+            boton.textContent = 'Siguiente';
+          }  else if (f === 1) {  // Agregamos esta condición para la carrera
+            titulo.textContent = 'Predicción Carrera';
+            subtitulo.textContent = '(Se tomarán solo los primeros 10 pilotos)';
+            boton.textContent = 'Siguiente';
+          } else {
+            titulo.textContent = 'Predicción Clasificación';
+            subtitulo.textContent = '';
+            boton.textContent = 'Siguiente';
+          }
+        }
+      }
+
+      function obtenerOrden(id) {
+        const lista = document.getElementById(id);
+        if (!lista) return [];
+        return Array.from(lista.children).map(el => ({
+          posicion: Array.from(lista.children).indexOf(el) + 1,
+          nombre: el.dataset.nombre,
+          tipo: id.replace('lista-', '')
+        }));
+      }
+
+      function enviarPredicciones() {
+        // Crear un array para almacenar todas las predicciones
+        const predicciones = [];
+        
+        // Obtener predicciones de clasificación
+        const ordenQualy = obtenerOrden("lista-qualy");
+        ordenQualy.forEach(item => {
+          predicciones.push({
+            posicion: item.posicion,
+            nombre: item.nombre,
+            tipo: 'qualy'
+          });
+        });
+      
+        // Obtener predicciones de carrera (solo los primeros 10)
+        const ordenCarrera = obtenerOrden("lista-carrera").slice(0, 10);
+        ordenCarrera.forEach(item => {
+          predicciones.push({
+            posicion: item.posicion,
+            nombre: item.nombre,
+            tipo: 'carrera'
+          });
+        });
+      
+        // Si hay sprint, agregar esas predicciones también
+        if (tieneSprint) {
+          const ordenQualyS = obtenerOrden("lista-qualys");
+          ordenQualyS.forEach(item => {
+            predicciones.push({
+              posicion: item.posicion,
+              nombre: item.nombre,
+              tipo: 'qualys'
+            });
+          });
+      
+          // Modificar para tomar solo los primeros 8 en el Sprint
+          const ordenCarreraS = obtenerOrden("lista-carreras").slice(0, 8);
+          ordenCarreraS.forEach(item => {
+            predicciones.push({
+              posicion: item.posicion,
+              nombre: item.nombre,
+              tipo: 'carreras'
+            });
+          });
+        }
+      
+        // Agregar predicción de vuelta rápida
+        const fastestLapSelect = document.getElementById('fastest-lap-select');
+        if (fastestLapSelect.value) {
+          predicciones.push({
+            posicion: 1,
+            nombre: fastestLapSelect.value,
+            tipo: 'fastest-lap'
+          });
+        }
+      
+        // Agregar predicción de pit stop más rápido
+        const fastestPitStopSelect = document.getElementById('fastest-pit-stop-select');
+        if (fastestPitStopSelect.value) {
+          predicciones.push({
+            posicion: 1,
+            nombre: fastestPitStopSelect.value,
+            tipo: 'fastest-pit-stop'
+          });
+        }
+      
+        // Agregar predicciones de DNF
+        const dnfPredictions = getDNFPredictions();
+        predicciones.push(...dnfPredictions);
+      
+        fetch('/guardar_orden', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(predicciones)
+        }).then(res => {
+          if (res.ok) {
+            alert("Predicciones enviadas");
+            window.location.href = '/';
+          } else {
+            alert("Error al enviar las predicciones.");
+          }
+        });
+      }
+    });
+
+      function toggleDNFSelection(element) {
+    const selectedDrivers = document.querySelectorAll('.dnf-driver.selected');
+    
+    if (!element.classList.contains('selected') && selectedDrivers.length >= 4) {
+      alert('Ya has seleccionado el máximo de 4 pilotos');
+      return;
+    }
+    
+    element.classList.toggle('selected');
+  }
+
+  function getDNFPredictions() {
+    const selectedDrivers = document.querySelectorAll('.dnf-driver.selected');
+    return Array.from(selectedDrivers).map((driver, index) => ({
+      posicion: index + 1,
+      nombre: driver.dataset.nombre,
+      tipo: 'dnf'
+    }));
+  }
+  </script>
+  </html>
