@@ -81,8 +81,7 @@ cache_path = os.path.join(os.path.dirname(__file__), 'f1cache')
 # Crear el directorio si no existe
 os.makedirs(cache_path, exist_ok=True)
 
-# Habilitar la caché de FastF1
-fastf1.Cache.enable_cache(cache_path)
+
 
 
 
