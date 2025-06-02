@@ -1,0 +1,10 @@
+fastf1
+flask
+flask_sqlalchemy
+flask_apscheduler
+pytz
+pandas
+schedule
+apscheduler
+pyjwt
+werkzeug
